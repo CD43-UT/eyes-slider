@@ -131,6 +131,8 @@
       }
 
       .iris {
+        --gx: 0%;
+        --gy: 0%;
         width: 44%;
         aspect-ratio: 1;
         border-radius: 50%;
@@ -169,29 +171,12 @@
         inset: 0;
         z-index: 2;
         border-radius: inherit;
-        background: #1a1428;
+        background: radial-gradient(120% 95% at 50% 28%, #ffffff 0%, #f3ecdf 58%, #e3d5c4 100%);
+        box-shadow: inset 0 -12% 16% rgba(120, 86, 58, 0.22);
         transform: scaleY(0);
         transform-origin: center top;
         pointer-events: none;
-        animation: blink var(--blink-every, 3.6s) linear var(--blink-delay, 0s) infinite;
-      }
-
-      @keyframes blink {
-        0%,
-        82%,
-        100% {
-          transform: scaleY(0);
-        }
-        88%,
-        92% {
-          transform: scaleY(1);
-        }
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        .lid {
-          animation: none;
-        }
+        transition: transform 0.11s ease-in-out;
       }
 
       @media (max-width: 520px) {
@@ -243,33 +228,80 @@
       const field = document.getElementById("field");
       const grid = document.getElementById("eyes");
 
-      function gaze(index) {
-        const angle = ((index * 47) % 360) * (Math.PI / 180);
-        return {
-          x: Math.cos(angle) * 16,
-          y: Math.sin(angle) * 10,
-        };
+      let pointer = null;
+
+      document.addEventListener("pointermove", (event) => {
+        pointer = { x: event.clientX, y: event.clientY };
+      });
+
+      document.addEventListener("pointerout", (event) => {
+        if (!event.relatedTarget) pointer = null;
+      });
+
+      window.addEventListener("blur", () => {
+        pointer = null;
+      });
+
+      function trackGaze() {
+        const eyes = grid.children;
+        for (let i = 0; i < eyes.length; i += 1) {
+          const eye = eyes[i];
+          const iris = eye.querySelector(".iris");
+          if (!iris) continue;
+          const rect = eye.getBoundingClientRect();
+          let tx = 0;
+          let ty = 0;
+          if (pointer && rect.width > 0) {
+            const dx = pointer.x - (rect.left + rect.width / 2);
+            const dy = pointer.y - (rect.top + rect.height / 2);
+            const maxX = rect.width * 0.14;
+            const maxY = rect.height * 0.16;
+            const reach = Math.hypot(dx / maxX, dy / maxY);
+            const scale = reach > 1 ? 1 / reach : 1;
+            const irisSize = rect.width * 0.44;
+            tx = ((dx * scale) / irisSize) * 100;
+            ty = ((dy * scale) / irisSize) * 100;
+          }
+          const look = eye._look || { x: 0, y: 0 };
+          const ease = pointer ? 0.28 : 0.1;
+          look.x += (tx - look.x) * ease;
+          look.y += (ty - look.y) * ease;
+          if (!pointer && Math.abs(look.x) < 0.15 && Math.abs(look.y) < 0.15) {
+            look.x = 0;
+            look.y = 0;
+          }
+          eye._look = look;
+          iris.style.setProperty("--gx", look.x.toFixed(2) + "%");
+          iris.style.setProperty("--gy", look.y.toFixed(2) + "%");
+        }
+        requestAnimationFrame(trackGaze);
       }
 
-      function blinkStyle(index) {
-        const every = 2.7 + (index % 8) * 0.38;
-        const phase = (index * 1.37) % every;
-        const delay = -(((performance.now() / 1000) + phase) % every);
-        return "--blink-every:" + every.toFixed(2) + "s;--blink-delay:" + delay.toFixed(3) + "s";
+      function stopBlink(eye) {
+        window.clearTimeout(eye._blinkTimer);
+      }
+
+      function startBlink(eye, index) {
+        const lid = eye.querySelector(".lid");
+        const every = 1600 + (index % 8) * 340;
+        const shutFor = 280;
+        const shut = () => {
+          if (!eye.isConnected) return;
+          lid.style.transform = "scaleY(1)";
+          eye._blinkTimer = window.setTimeout(() => {
+            if (!eye.isConnected) return;
+            lid.style.transform = "scaleY(0)";
+            eye._blinkTimer = window.setTimeout(shut, every);
+          }, shutFor);
+        };
+        eye._blinkTimer = window.setTimeout(shut, (index * 410) % every);
       }
 
       function eyeMarkup(index) {
-        const look = gaze(index);
         const color = IRISES[index % IRISES.length];
         return (
           '<div class="eye" style="--iris:' +
           color +
-          ";--gx:" +
-          look.x.toFixed(1) +
-          "%;--gy:" +
-          look.y.toFixed(1) +
-          "%;" +
-          blinkStyle(index) +
           '"><span class="iris"><span class="pupil"></span><span class="glint"></span></span><span class="lid"></span></div>'
         );
       }
@@ -314,8 +346,12 @@
           const markup = [];
           for (let index = shown; index < count; index += 1) markup.push(eyeMarkup(index));
           grid.insertAdjacentHTML("beforeend", markup.join(""));
+          for (let index = shown; index < count; index += 1) startBlink(grid.children[index], index);
         } else {
-          while (grid.children.length > count) grid.lastElementChild.remove();
+          while (grid.children.length > count) {
+            stopBlink(grid.lastElementChild);
+            grid.lastElementChild.remove();
+          }
         }
         const span = MAX - MIN;
         const filled = ((count - MIN) / span) * 100;
@@ -327,6 +363,7 @@
       input.addEventListener("input", () => render(input.value));
       new ResizeObserver(fit).observe(field);
       render(input.value);
+      requestAnimationFrame(trackGaze);
     </script>
   </body>
 </html>
