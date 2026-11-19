@@ -283,7 +283,7 @@
 
       function startBlink(eye, index) {
         const lid = eye.querySelector(".lid");
-        const every = 1600 + (index % 8) * 340;
+        const period = 6000 + (index % 9) * 750;
         const shutFor = 280;
         const shut = () => {
           if (!eye.isConnected) return;
@@ -291,10 +291,10 @@
           eye._blinkTimer = window.setTimeout(() => {
             if (!eye.isConnected) return;
             lid.style.transform = "scaleY(0)";
-            eye._blinkTimer = window.setTimeout(shut, every);
+            eye._blinkTimer = window.setTimeout(shut, period - shutFor);
           }, shutFor);
         };
-        eye._blinkTimer = window.setTimeout(shut, (index * 410) % every);
+        eye._blinkTimer = window.setTimeout(shut, (index * 910) % period);
       }
 
       function eyeMarkup(index) {
