@@ -12,9 +12,15 @@
         --accent: #c45c26;
       }
 
-      * { box-sizing: border-box; }
+      * {
+        box-sizing: border-box;
+      }
 
-      html, body { margin: 0; height: 100%; }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
 
       body {
         display: flex;
@@ -40,7 +46,10 @@
         box-shadow: 0 10px 28px rgba(8, 4, 16, 0.28);
       }
 
-      label { font-weight: 650; letter-spacing: 0.01em; }
+      label {
+        font-weight: 650;
+        letter-spacing: 0.01em;
+      }
 
       input[type="range"] {
         -webkit-appearance: none;
@@ -161,16 +170,34 @@
           padding: 0.5rem 0.7rem 0.5rem 0.85rem;
           gap: 0.55rem;
         }
-        label { font-size: 0.95rem; }
-        output { font-size: 1.2rem; }
-        #field { padding: 0.45rem; }
+
+        label {
+          font-size: 0.95rem;
+        }
+
+        output {
+          font-size: 1.2rem;
+        }
+
+        #field {
+          padding: 0.45rem;
+        }
       }
     </style>
   </head>
   <body>
     <header class="bar">
       <label for="eye-count">Eyes</label>
-      <input id="eye-count" type="range" min="1" max="40" value="6" aria-valuemin="1" aria-valuemax="40" aria-valuenow="6" />
+      <input
+        id="eye-count"
+        type="range"
+        min="1"
+        max="40"
+        value="6"
+        aria-valuemin="1"
+        aria-valuemax="40"
+        aria-valuenow="6"
+      />
       <output id="eye-count-value" for="eye-count">6</output>
     </header>
     <main id="field">
@@ -180,6 +207,7 @@
       const MIN = 1;
       const MAX = 40;
       const IRISES = ["#2b6cb0", "#2f855a", "#8a5a32", "#3d5a40", "#1e4e8c", "#b7791f", "#6b4c7a", "#3f6f8a"];
+
       const input = document.getElementById("eye-count");
       const output = document.getElementById("eye-count-value");
       const field = document.getElementById("field");
@@ -187,15 +215,22 @@
 
       function gaze(index) {
         const angle = ((index * 47) % 360) * (Math.PI / 180);
-        return { x: Math.cos(angle) * 16, y: Math.sin(angle) * 10 };
+        return {
+          x: Math.cos(angle) * 16,
+          y: Math.sin(angle) * 10,
+        };
       }
 
       function eyeMarkup(index) {
         const look = gaze(index);
         const color = IRISES[index % IRISES.length];
         return (
-          '<div class="eye" style="--iris:' + color +
-          ";--gx:" + look.x.toFixed(1) + "%;--gy:" + look.y.toFixed(1) +
+          '<div class="eye" style="--iris:' +
+          color +
+          ";--gx:" +
+          look.x.toFixed(1) +
+          "%;--gy:" +
+          look.y.toFixed(1) +
           '%"><span class="iris"><span class="pupil"></span><span class="glint"></span></span></div>'
         );
       }
@@ -208,6 +243,7 @@
         const availW = field.clientWidth - padX;
         const availH = field.clientHeight - padY;
         if (count < 1 || availW < 24 || availH < 24) return;
+
         const gap = Math.max(6, Math.min(16, availW * 0.018));
         const ratio = 0.72;
         let bestCols = 1;
@@ -217,8 +253,12 @@
           const width = (availW - gap * (cols - 1)) / cols;
           const height = (availH - gap * (rows - 1)) / rows;
           const size = Math.min(width, height / ratio);
-          if (size > bestSize) { bestSize = size; bestCols = cols; }
+          if (size > bestSize) {
+            bestSize = size;
+            bestCols = cols;
+          }
         }
+
         const size = Math.max(12, Math.min(Math.floor(bestSize), 220));
         grid.style.setProperty("--cols", String(bestCols));
         grid.style.setProperty("--eye", size + "px");
@@ -238,8 +278,10 @@
         } else {
           while (grid.children.length > count) grid.lastElementChild.remove();
         }
-        const filled = ((count - MIN) / (MAX - MIN)) * 100;
-        input.style.background = "linear-gradient(90deg, var(--accent) " + filled + "%, var(--track) " + filled + "%)";
+        const span = MAX - MIN;
+        const filled = ((count - MIN) / span) * 100;
+        input.style.background =
+          "linear-gradient(90deg, var(--accent) " + filled + "%, var(--track) " + filled + "%)";
         fit();
       }
 
