@@ -164,6 +164,36 @@
         background: rgba(255, 255, 255, 0.92);
       }
 
+      .lid {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        border-radius: inherit;
+        background: #1a1428;
+        transform: scaleY(0);
+        transform-origin: center top;
+        pointer-events: none;
+        animation: blink var(--blink-every, 3.6s) linear var(--blink-delay, 0s) infinite;
+      }
+
+      @keyframes blink {
+        0%,
+        82%,
+        100% {
+          transform: scaleY(0);
+        }
+        88%,
+        92% {
+          transform: scaleY(1);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .lid {
+          animation: none;
+        }
+      }
+
       @media (max-width: 520px) {
         .bar {
           margin-top: 0.55rem;
@@ -221,6 +251,13 @@
         };
       }
 
+      function blinkStyle(index) {
+        const every = 2.7 + (index % 8) * 0.38;
+        const phase = (index * 1.37) % every;
+        const delay = -(((performance.now() / 1000) + phase) % every);
+        return "--blink-every:" + every.toFixed(2) + "s;--blink-delay:" + delay.toFixed(3) + "s";
+      }
+
       function eyeMarkup(index) {
         const look = gaze(index);
         const color = IRISES[index % IRISES.length];
@@ -231,7 +268,9 @@
           look.x.toFixed(1) +
           "%;--gy:" +
           look.y.toFixed(1) +
-          '%"><span class="iris"><span class="pupil"></span><span class="glint"></span></span></div>'
+          "%;" +
+          blinkStyle(index) +
+          '"><span class="iris"><span class="pupil"></span><span class="glint"></span></span><span class="lid"></span></div>'
         );
       }
 
