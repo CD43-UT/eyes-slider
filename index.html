@@ -3,231 +3,249 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Sunset</title>
-    <link rel="stylesheet" href="styles.css?v=36" />
+    <title>Eyes</title>
     <style>
-      .band {
-        display: none !important;
-        background: none !important;
-        background-image: none !important;
+      :root {
+        --ink: #241c33;
+        --paper: #f6f1e8;
+        --track: #e4d9c8;
+        --accent: #c45c26;
       }
-      .controls {
-        display: none !important;
-        background: none !important;
-        background-image: none !important;
-      }
-      .vision-fan {
-        position: fixed;
-        z-index: 5;
-        --size: min(7dvh, 6.5vw);
-        --hub: clamp(8rem, 28vw, 18rem);
-        --row-left: calc(var(--hub) * 0.81555);
-        --center: calc(var(--hub) * 0.31555);
-        --span: calc(100vw - var(--row-left));
-        --dot: min(calc(var(--span) * 25 / 338), calc(var(--center) * 2));
-        --gap: calc((var(--span) - 10 * var(--dot)) / 11);
-        left: calc(var(--hub) * -0.18445);
-        bottom: calc(var(--hub) * -0.18445);
-        width: var(--hub);
-        height: var(--hub);
-      }
-      .vision-list {
-        position: fixed;
-        left: var(--row-left);
-        right: 0;
-        bottom: calc(var(--center) - var(--dot) / 2);
+
+      * { box-sizing: border-box; }
+
+      html, body { margin: 0; height: 100%; }
+
+      body {
         display: flex;
-        flex-wrap: nowrap;
+        flex-direction: column;
+        min-height: 100dvh;
+        overflow: hidden;
+        background:
+          radial-gradient(ellipse at 50% -10%, #4a3568 0%, transparent 52%),
+          #1a1428;
+        color: var(--ink);
+        font-family: "Avenir Next", "Segoe UI", system-ui, sans-serif;
+      }
+
+      .bar {
+        display: flex;
         align-items: center;
-        justify-content: flex-start;
-        gap: var(--gap);
-        box-sizing: border-box;
-        height: var(--dot);
+        gap: 0.75rem;
+        margin: 0.85rem auto 0.35rem;
+        padding: 0.55rem 0.85rem 0.55rem 1rem;
+        width: min(36rem, calc(100% - 1.25rem));
+        border-radius: 999px;
+        background: var(--paper);
+        box-shadow: 0 10px 28px rgba(8, 4, 16, 0.28);
+      }
+
+      label { font-weight: 650; letter-spacing: 0.01em; }
+
+      input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        flex: 1 1 auto;
+        min-width: 0;
+        height: 0.45rem;
         margin: 0;
-        padding: 0 var(--gap);
-        pointer-events: none;
-      }
-      .corner {
-        position: relative;
-        z-index: 3;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-        padding: 0;
-        border: 0 !important;
-        border-radius: 50%;
-        background-color: rgba(246, 239, 230, 0.3) !important;
-        color: #f6efe6;
-        line-height: 0;
+        border-radius: 999px;
+        background: var(--track);
         cursor: pointer;
+        touch-action: none;
       }
-      .corner svg {
-        display: block;
-        width: 46%;
-        height: 46%;
-        margin: 0;
+
+      input[type="range"]:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 4px;
       }
-      .vision-fan[data-vision="dog"] .corner { background-color: rgba(226, 193, 90, 0.3) !important; }
-      .vision-fan[data-vision="cat"] .corner { background-color: rgba(154, 165, 138, 0.3) !important; }
-      .vision-fan[data-vision="monarch"] .corner { background-color: rgba(224, 122, 47, 0.3) !important; }
-      .vision-fan[data-vision="bee"] .corner { background-color: rgba(240, 196, 58, 0.3) !important; }
-      .vision-fan[data-vision="bird"] .corner { background-color: rgba(126, 182, 255, 0.3) !important; }
-      .vision-fan[data-vision="grasshopper"] .corner { background-color: rgba(125, 190, 74, 0.3) !important; }
-      .vision-fan[data-vision="mantis"] .corner { background-color: rgba(255, 90, 209, 0.3) !important; }
-      .vision-fan[data-vision="shark"] .corner { background-color: rgba(215, 215, 222, 0.3) !important; }
-      .vision-fan[data-vision="dragonfly"] .corner { background-color: rgba(94, 224, 255, 0.3) !important; }
-      .vision-list .circle {
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 1.4rem;
+        height: 1.4rem;
+        border: 2px solid #fff8ee;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 1px 3px rgba(20, 10, 8, 0.35);
+        cursor: grab;
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        width: 1.4rem;
+        height: 1.4rem;
+        border: 2px solid #fff8ee;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 1px 3px rgba(20, 10, 8, 0.35);
+        cursor: grab;
+      }
+
+      output {
+        min-width: 2ch;
+        font-size: 1.35rem;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        text-align: right;
+        line-height: 1;
+      }
+
+      #field {
+        flex: 1;
+        min-height: 0;
+        display: grid;
+        place-items: center;
+        padding: 0.75rem;
+      }
+
+      #eyes {
+        display: grid;
+        grid-template-columns: repeat(var(--cols, 3), var(--eye, 4.5rem));
+        gap: var(--gap, 0.75rem);
+        justify-content: center;
+        align-content: center;
+      }
+
+      .eye {
+        width: var(--eye, 4.5rem);
+        height: calc(var(--eye, 4.5rem) * 0.72);
+        border-radius: 50%;
+        background: radial-gradient(120% 95% at 50% 28%, #ffffff 0%, #f3ecdf 58%, #e3d5c4 100%);
+        box-shadow:
+          inset 0 0 0 calc(var(--eye, 4.5rem) * 0.04) #241c33,
+          0 calc(var(--eye, 4.5rem) * 0.045) calc(var(--eye, 4.5rem) * 0.09) rgba(8, 4, 16, 0.28);
+        display: grid;
+        place-items: center;
         position: relative;
-        z-index: 2;
-        left: auto;
-        top: auto;
-        flex: 0 0 var(--dot);
-        width: var(--dot);
-        height: var(--dot);
-        margin: 0;
-        opacity: 0;
-        pointer-events: none;
-        transform: translateX(calc(var(--i) * (var(--dot) + var(--gap)) * -1));
-        transition: transform 0.32s cubic-bezier(0.22, 0.8, 0.24, 1), opacity 0.22s ease;
-        transition-delay: calc((9 - var(--i)) * 14ms);
+        overflow: hidden;
       }
-      .vision-fan:is(:hover, :focus-within, .is-open, .is-hot):not(.is-shut) .vision-list {
-        pointer-events: auto;
+
+      .iris {
+        width: 44%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 34% 30%,
+          color-mix(in srgb, var(--iris) 62%, white) 0%,
+          var(--iris) 46%,
+          color-mix(in srgb, var(--iris) 35%, black) 100%
+        );
+        transform: translate(var(--gx), var(--gy));
+        display: grid;
+        place-items: center;
+        position: relative;
+        box-shadow: inset 0 0 0 1px rgba(20, 10, 8, 0.28);
       }
-      .vision-fan:is(:hover, :focus-within, .is-open, .is-hot):not(.is-shut) .circle {
-        opacity: 1;
-        pointer-events: auto;
-        transform: translateX(0);
-        transition-delay: calc(var(--i) * 14ms);
+
+      .pupil {
+        width: 46%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: radial-gradient(circle at 40% 36%, #2a2433 0%, #100e14 70%);
       }
-      .circle {
-        border: 0 !important;
-        background-color: rgba(246, 239, 230, 0.3) !important;
+
+      .glint {
+        position: absolute;
+        top: 16%;
+        left: 18%;
+        width: 24%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.92);
       }
-      .circle.vision-dog { background-color: rgba(226, 193, 90, 0.3) !important; }
-      .circle.vision-cat { background-color: rgba(154, 165, 138, 0.3) !important; }
-      .circle.vision-monarch { background-color: rgba(224, 122, 47, 0.3) !important; }
-      .circle.vision-bee { background-color: rgba(240, 196, 58, 0.3) !important; }
-      .circle.vision-bird { background-color: rgba(126, 182, 255, 0.3) !important; }
-      .circle.vision-grasshopper { background-color: rgba(125, 190, 74, 0.3) !important; }
-      .circle.vision-mantis { background-color: rgba(255, 90, 209, 0.3) !important; }
-      .circle.vision-shark { background-color: rgba(215, 215, 222, 0.3) !important; }
-      .circle.vision-dragonfly { background-color: rgba(94, 224, 255, 0.3) !important; }
-      .nav {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding: 0 !important;
-        line-height: 0 !important;
-        border: 0 !important;
-        background-color: rgba(246, 239, 230, 0.3) !important;
-      }
-      .nav svg {
-        display: block;
-        width: 1.45rem;
-        height: 1.45rem;
-        margin: 0;
+
+      @media (max-width: 520px) {
+        .bar {
+          margin-top: 0.55rem;
+          padding: 0.5rem 0.7rem 0.5rem 0.85rem;
+          gap: 0.55rem;
+        }
+        label { font-size: 0.95rem; }
+        output { font-size: 1.2rem; }
+        #field { padding: 0.45rem; }
       }
     </style>
   </head>
   <body>
-    <svg class="vision-filters" aria-hidden="true">
-      <filter id="vision-dog" color-interpolation-filters="sRGB">
-        <feColorMatrix type="matrix" values="0.85 0.72 -0.38 0 0 0.72 0.64 -0.32 0 0 -0.30 -0.20 1.40 0 0 0 0 0 1 0" />
-        <feComponentTransfer>
-          <feFuncR type="gamma" amplitude="1" exponent="0.92" offset="0" />
-          <feFuncG type="gamma" amplitude="1" exponent="0.92" offset="0" />
-          <feFuncB type="gamma" amplitude="1" exponent="0.92" offset="0" />
-        </feComponentTransfer>
-      </filter>
-      <filter id="vision-cat" color-interpolation-filters="sRGB">
-        <feColorMatrix type="matrix" values="0.18 0.42 0.22 0 0 0.04 1.05 0.10 0 0 0.04 0.16 1.12 0 0 0 0 0 1 0" />
-        <feComponentTransfer>
-          <feFuncR type="gamma" amplitude="1" exponent="0.86" offset="0" />
-          <feFuncG type="gamma" amplitude="1" exponent="0.86" offset="0" />
-          <feFuncB type="gamma" amplitude="1" exponent="0.86" offset="0" />
-        </feComponentTransfer>
-      </filter>
-      <filter id="vision-monarch" color-interpolation-filters="sRGB">
-        <feColorMatrix type="matrix" values="1.20 0.15 0.28 0 0 0.00 1.28 0.00 0 0 0.00 0.06 1.25 0 0 0 0 0 1 0" />
-      </filter>
-      <filter id="vision-bee" color-interpolation-filters="sRGB">
-        <feColorMatrix in="SourceGraphic" type="matrix" values="0.00 0.18 0.62 0 0 0.00 1.20 0.04 0 0 0.00 0.32 1.25 0 0 0 0 0 1 0" result="kept" />
-        <feColorMatrix in="SourceGraphic" type="matrix" values="1 -1 -1 0 0 1 -1 -1 0 0 1 -1 -1 0 0 0 0 0 0 1" result="redness" />
-        <feComponentTransfer in="redness" result="shade">
-          <feFuncR type="linear" slope="-2.4" intercept="1" />
-          <feFuncG type="linear" slope="-2.4" intercept="1" />
-          <feFuncB type="linear" slope="-2.4" intercept="1" />
-        </feComponentTransfer>
-        <feBlend in="kept" in2="shade" mode="multiply" />
-      </filter>
-      <filter id="vision-bird" color-interpolation-filters="sRGB">
-        <feColorMatrix type="matrix" values="1.08 0.00 0.28 0 0 0.00 1.10 0.00 0 0 0.00 0.00 1.22 0 0 0 0 0 1 0" />
-      </filter>
-      <filter id="vision-grasshopper" color-interpolation-filters="sRGB">
-        <feColorMatrix type="matrix" values="0.10 0.04 0.02 0 0 0.04 1.05 0.28 0 0 0.32 0.22 1.12 0 0 0 0 0 1 0" />
-      </filter>
-      <filter id="vision-mantis" color-interpolation-filters="sRGB">
-        <feColorMatrix type="matrix" values="0.30 0.52 0.18 0 0 0.30 0.52 0.18 0 0 0.30 0.52 0.18 0 0 0 0 0 1 0" />
-        <feComponentTransfer>
-          <feFuncR type="discrete" tableValues="0.40 0.78 0.95 0.15 0.08 0.50" />
-          <feFuncG type="discrete" tableValues="0.02 0.05 0.32 0.62 0.16 0.08" />
-          <feFuncB type="discrete" tableValues="0.05 0.07 0.05 0.16 0.86 0.80" />
-        </feComponentTransfer>
-      </filter>
-      <filter id="vision-shark" color-interpolation-filters="sRGB">
-        <feColorMatrix type="matrix" values="0.30 0.52 0.18 0 0 0.30 0.52 0.18 0 0 0.30 0.52 0.18 0 0 0 0 0 1 0" />
-        <feComponentTransfer>
-          <feFuncR type="gamma" amplitude="1" exponent="0.84" offset="0" />
-          <feFuncG type="gamma" amplitude="1" exponent="0.84" offset="0" />
-          <feFuncB type="gamma" amplitude="1" exponent="0.84" offset="0" />
-        </feComponentTransfer>
-        <feComponentTransfer>
-          <feFuncR type="linear" slope="1.32" intercept="-0.1" />
-          <feFuncG type="linear" slope="1.32" intercept="-0.1" />
-          <feFuncB type="linear" slope="1.32" intercept="-0.1" />
-        </feComponentTransfer>
-      </filter>
-      <filter id="vision-dragonfly" color-interpolation-filters="sRGB">
-        <feColorMatrix type="matrix" values="1.40 0.04 0.00 0 0 0.00 0.42 0.00 0 0 0.62 0.00 1.20 0 0 0 0 0 1 0" />
-      </filter>
-    </svg>
-    <div class="stage">
-      <video id="picture" muted autoplay playsinline crossorigin="anonymous"></video>
-      <img id="mjpeg" alt="" crossorigin="anonymous" hidden />
-      <canvas id="frame"></canvas>
-      <p id="empty" class="empty" hidden>No cameras are near sunset right now.</p>
-    </div>
-    <a id="credit" class="credit" hidden></a>
-    <p id="camera-count" class="camera-count" hidden></p>
-    <button class="nav prev" type="button" hidden aria-label="Previous camera">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 5.5 L8.5 12 L15.5 18.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-    </button>
-    <button class="nav next" type="button" hidden aria-label="Next camera">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5 L15.5 12 L8.5 18.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-    </button>
-    <div class="vision-wash" id="vision-wash" aria-hidden="true"></div>
-    <p class="vision-name" id="vision-name" hidden></p>
-    <div class="vision-fan" id="vision-fan" data-vision="">
-      <button class="corner" type="button" aria-expanded="false" aria-controls="vision-list" aria-label="Vision filters">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12c2.8-4.2 6-6.3 9-6.3S18.2 7.8 21 12c-2.8 4.2-6 6.3-9 6.3S5.8 16.2 3 12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /><circle cx="12" cy="12" r="2.3" fill="currentColor" /></svg>
-      </button>
-      <div class="vision-list" id="vision-list">
-        <button class="circle is-on" type="button" style="--i: 0" data-vision="" aria-pressed="true" aria-label="Normal vision" tabindex="-1" aria-hidden="true"></button>
-        <button class="circle vision-dog" type="button" style="--i: 1" data-vision="dog" aria-pressed="false" aria-label="Dog, blue, yellow, and gray" title="Dog" tabindex="-1" aria-hidden="true"></button>
-        <button class="circle vision-cat" type="button" style="--i: 2" data-vision="cat" aria-pressed="false" aria-label="Cat, blue, green, and yellow" title="Cat" tabindex="-1" aria-hidden="true"></button>
-        <button class="circle vision-monarch" type="button" style="--i: 3" data-vision="monarch" aria-pressed="false" aria-label="Monarch butterfly, ultraviolet, blue, green, and orange" title="Monarch butterfly" tabindex="-1" aria-hidden="true"></button>
-        <button class="circle vision-bee" type="button" style="--i: 4" data-vision="bee" aria-pressed="false" aria-label="Honey bee, reds dark, with ultraviolet, blue, and green" title="Honey bee" tabindex="-1" aria-hidden="true"></button>
-        <button class="circle vision-bird" type="button" style="--i: 5" data-vision="bird" aria-pressed="false" aria-label="Migratory birds, visible light and ultraviolet" title="Migratory birds" tabindex="-1" aria-hidden="true"></button>
-        <button class="circle vision-grasshopper" type="button" style="--i: 6" data-vision="grasshopper" aria-pressed="false" aria-label="Grasshopper, ultraviolet, blue, and green" title="Grasshopper" tabindex="-1" aria-hidden="true"></button>
-        <button class="circle vision-mantis" type="button" style="--i: 7" data-vision="mantis" aria-pressed="false" aria-label="Mantis shrimp, unblended colors and polarized light" title="Mantis shrimp" tabindex="-1" aria-hidden="true"></button>
-        <button class="circle vision-shark" type="button" style="--i: 8" data-vision="shark" aria-pressed="false" aria-label="Shark, black, white, and gray" title="Shark" tabindex="-1" aria-hidden="true"></button>
-        <button class="circle vision-dragonfly" type="button" style="--i: 9" data-vision="dragonfly" aria-pressed="false" aria-label="Dragonfly, ultraviolet to near infrared, polarized light" title="Dragonfly" tabindex="-1" aria-hidden="true"></button>
-      </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.13/dist/hls.min.js"></script>
-    <script src="app.js?v=37"></script>
+    <header class="bar">
+      <label for="eye-count">Eyes</label>
+      <input id="eye-count" type="range" min="1" max="40" value="6" aria-valuemin="1" aria-valuemax="40" aria-valuenow="6" />
+      <output id="eye-count-value" for="eye-count">6</output>
+    </header>
+    <main id="field">
+      <div id="eyes" aria-hidden="true"></div>
+    </main>
+    <script>
+      const MIN = 1;
+      const MAX = 40;
+      const IRISES = ["#2b6cb0", "#2f855a", "#8a5a32", "#3d5a40", "#1e4e8c", "#b7791f", "#6b4c7a", "#3f6f8a"];
+      const input = document.getElementById("eye-count");
+      const output = document.getElementById("eye-count-value");
+      const field = document.getElementById("field");
+      const grid = document.getElementById("eyes");
+
+      function gaze(index) {
+        const angle = ((index * 47) % 360) * (Math.PI / 180);
+        return { x: Math.cos(angle) * 16, y: Math.sin(angle) * 10 };
+      }
+
+      function eyeMarkup(index) {
+        const look = gaze(index);
+        const color = IRISES[index % IRISES.length];
+        return (
+          '<div class="eye" style="--iris:' + color +
+          ";--gx:" + look.x.toFixed(1) + "%;--gy:" + look.y.toFixed(1) +
+          '%"><span class="iris"><span class="pupil"></span><span class="glint"></span></span></div>'
+        );
+      }
+
+      function fit() {
+        const count = grid.children.length;
+        const style = getComputedStyle(field);
+        const padX = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+        const padY = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+        const availW = field.clientWidth - padX;
+        const availH = field.clientHeight - padY;
+        if (count < 1 || availW < 24 || availH < 24) return;
+        const gap = Math.max(6, Math.min(16, availW * 0.018));
+        const ratio = 0.72;
+        let bestCols = 1;
+        let bestSize = 0;
+        for (let cols = 1; cols <= count; cols += 1) {
+          const rows = Math.ceil(count / cols);
+          const width = (availW - gap * (cols - 1)) / cols;
+          const height = (availH - gap * (rows - 1)) / rows;
+          const size = Math.min(width, height / ratio);
+          if (size > bestSize) { bestSize = size; bestCols = cols; }
+        }
+        const size = Math.max(12, Math.min(Math.floor(bestSize), 220));
+        grid.style.setProperty("--cols", String(bestCols));
+        grid.style.setProperty("--eye", size + "px");
+        grid.style.setProperty("--gap", gap.toFixed(2) + "px");
+      }
+
+      function render(value) {
+        const count = Math.max(MIN, Math.min(MAX, Math.round(Number(value)) || MIN));
+        input.value = String(count);
+        input.setAttribute("aria-valuenow", String(count));
+        output.textContent = String(count);
+        const shown = grid.children.length;
+        if (shown < count) {
+          const markup = [];
+          for (let index = shown; index < count; index += 1) markup.push(eyeMarkup(index));
+          grid.insertAdjacentHTML("beforeend", markup.join(""));
+        } else {
+          while (grid.children.length > count) grid.lastElementChild.remove();
+        }
+        const filled = ((count - MIN) / (MAX - MIN)) * 100;
+        input.style.background = "linear-gradient(90deg, var(--accent) " + filled + "%, var(--track) " + filled + "%)";
+        fit();
+      }
+
+      input.addEventListener("input", () => render(input.value));
+      new ResizeObserver(fit).observe(field);
+      render(input.value);
+    </script>
   </body>
 </html>
